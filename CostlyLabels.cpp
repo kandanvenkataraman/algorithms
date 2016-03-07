@@ -49,18 +49,17 @@ int hungarian(int N)
  
    while (matchCount < N) {
  
-      vector<bool> S(N, false);
-      vector<bool> T(N, false);
       queue<int> QS;
-      vector<bool>  VS(N, false);
  
+		bool S[30];
+		bool T[30];
       int PX[30];
       int PY[30];
  
       for (int i = 0; i < N; i++) {
+			S[i] = T[i] = false;
          PX[i] = PY[i] = -1;
          if (MX[i] == -1) {
-				S[i] = true;
             QS.push(i);
          }
       }
@@ -69,37 +68,37 @@ int hungarian(int N)
  
 start:
       while (!QS.empty()) {
+
          int x = QS.front();
          QS.pop();
  
-			if (VS[x])
+			if (S[x])
             continue;
 			
-			VS[x] = true;
+			S[x] = true;
  
          for (int i = 0; i < N; i++) {
-				if (M[x][i] != 0)
+				if (M[x][i] != 0 || T[i])
 					continue;
+				T[i] = true;
+            PY[i] = x;
             if (MY[i] == -1) {
                freeY = i;
-               PY[i] = x;
                break;
             }
-            else if (MY[i] != x && !T[i]) {
-               PY[i] = x;
+            else {
                PX[MY[i]] = i;
-					T[i] = true;
-               S[MY[i]] = true;
                QS.push(MY[i]);
             }
          }
          if (freeY != -1)
             break;
       }
- 
-      int count = 0;
-      int curr = freeY;
+
+start2:
       if (freeY != -1) {
+      	int count = 0;
+      	int curr = freeY;
          // augment match path to matches;
  
          while (curr != -1) {
@@ -119,9 +118,9 @@ start:
          matchCount++;
          continue;
       }
- 
+
   		int theta = INT_MAX;
- 
+
       for (int i = 0; i < N; i++)  {
          for (int j = 0; j < N; j++) {
             if (S[i] && !T[j])
@@ -129,27 +128,41 @@ start:
          }
       }
  
-      for (int i = 0; i < N; i++)  {
-         for (int j = 0; j < N; j++) {
-				if (S[i])
-               M[i][j] -= theta;
-				if (T[j])
-               M[i][j] += theta;
-				else if (S[i] && M[i][j] == 0) {
-					QS.push(i);
-					VS[i] = false;
-				}
-         }
-      }
- 
+		queue<int> QT;
       for (int i = 0; i < N; i++)  {
 			if (S[i])
 				C += theta;
 			if (T[i])
 				C -= theta;
-		}
-		goto start;
+         for (int j = 0; j < N; j++) {
+				if (S[i])
+               M[i][j] -= theta;
+				if (T[j])
+               M[i][j] += theta;
+				else if (S[i] && M[i][j] == 0 && PY[j] == -1) {
+					QT.push(j);
+					PY[j] = i;
+				}
+         }
+      }
  
+		while (!QT.empty()) {
+			int x = QT.front();
+			QT.pop();
+			if (T[x])
+				continue;
+			T[x] = true;
+			if (MY[x] == -1) {
+				freeY = x;
+				goto start2;
+			}
+			else {
+				QS.push(MY[x]);
+				PX[MY[x]] = x;
+			}
+		}
+
+		goto start;
    }
  
    return C;
