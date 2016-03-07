@@ -61,8 +61,6 @@ int hungarian(int N)
  
       vector<bool> S(N, false);
       vector<bool> T(N, false);
-      vector<bool> VS(N, false);
-      vector<bool> VT(N, false);
       int PX[30];
       int PY[30];
  
@@ -82,35 +80,33 @@ start:
          Q.pop();
  
 			if (x.isX) {
-				if (VS[x.idx])
+				if (S[x.idx])
             	continue;
-				VS[x.idx] = true;
-				PX[x.idx] = x.parentIdx;
 				S[x.idx] = true;	
+				PX[x.idx] = x.parentIdx;
 				for (int i = 0; i < N; i++) {
 					if (M[x.idx][i] == 0 && MX[x.idx] != i && !T[i])
 						Q.push(Elem(i, false, x.idx));
 				}
 			}
 			else {
-				if (VT[x.idx])
+				if (T[x.idx])
             	continue;
-				VT[x.idx] = true;
+				T[x.idx] = true;
 				PY[x.idx] = x.parentIdx;
 				if (MY[x.idx] == -1) {
 					freeY = x.idx;
 					break;
 				}
 				else {
-					T[x.idx] = true;
 					Q.push(Elem(MY[x.idx], true, x.idx));
 				}
 			}
       }
  
-      int count = 0;
-      int curr = freeY;
       if (freeY != -1) {
+      	int count = 0;
+      	int curr = freeY;
          // augment match path to matches;
  
          while (curr != -1) {
