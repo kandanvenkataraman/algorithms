@@ -88,7 +88,7 @@ start:
 				PX[x.idx] = x.parentIdx;
 				S[x.idx] = true;	
 				for (int i = 0; i < N; i++) {
-					if (M[x.idx][i] == 0 && MX[x.idx] != i)
+					if (M[x.idx][i] == 0 && MX[x.idx] != i && !T[i])
 						Q.push(Elem(i, false, x.idx));
 				}
 			}
