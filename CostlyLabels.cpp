@@ -66,7 +66,7 @@ int hungarian(int N)
  
       int freeY = -1;
  
-start:
+buildtree:
       while (!QS.empty()) {
 
          int x = QS.front();
@@ -95,7 +95,7 @@ start:
             break;
       }
 
-start2:
+incrmatchset:
       if (freeY != -1) {
       	int count = 0;
       	int curr = freeY;
@@ -154,7 +154,7 @@ start2:
 			T[x] = true;
 			if (MY[x] == -1) {
 				freeY = x;
-				goto start2;
+				goto incrmatchset;
 			}
 			else {
 				QS.push(MY[x]);
@@ -162,7 +162,7 @@ start2:
 			}
 		}
 
-		goto start;
+		goto buildtree;
    }
  
    return C;
