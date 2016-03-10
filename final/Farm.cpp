@@ -14,52 +14,11 @@ int M, N, K;
 int dp[2][100][2][100][1001];
 vector<string> matrix(100);
 
-int Calc(int isCol, int idx, int isUp, int subIdx, int k)
+int Calc(int isCol, int idx, int isUp, int subIdx, int k);
+
+int CommonCalc(bool currUp, int isCol, int idx, int isUp, int subIdx, int k)
 {
-	if (!isCol) {
-
-		if (idx == M)
-			return Calc(1, 0, 1, 0, k);
-		if (subIdx == N) 
-			return Calc(0, idx+1, 1, 0, k);
-
-		int &r = dp[isCol][idx][isUp][subIdx][k];
-		if (r != -1)
-			return r;
-
-		bool currUp = (matrix[idx][subIdx] == 'A' || matrix[idx][subIdx] == 'D');
-		if (isUp) {
-			r = Calc(isCol, idx, currUp, subIdx+1, k);
-			if (k > 0) {
-				r = min(r, Calc(isCol, idx, !currUp, subIdx+1, k-1));
-			}
-		}
-		else {
-			assert(subIdx > 0);
-			if (!currUp)
-				r = Calc(isCol, idx, currUp, subIdx+1, k);
-			else
-				r = 1 + Calc(isCol, idx, currUp, subIdx+1, k);
-			if (k > 0) {
-				if (!currUp)
-					r = min(r, 1+Calc(isCol, idx, !currUp, subIdx+1, k-1));
-				else
-					r = min(r, Calc(isCol, idx, !currUp, subIdx+1, k-1));
-			}
-		}
-		return r;
-	}
-
-	if (idx == N)
-		return 0;
-	if (subIdx == M) 
-		return Calc(1, idx+1, 1, 0, k);
-
-	int &r = dp[isCol][idx][isUp][subIdx][k];
-	if (r != -1)
-		return r;
-
-	bool currUp = (matrix[subIdx][idx] == 'A' || matrix[subIdx][idx] == 'B');
+	int r = 0;
 	if (isUp) {
 		r = Calc(isCol, idx, currUp, subIdx+1, k);
 		if (k > 0) {
@@ -79,6 +38,38 @@ int Calc(int isCol, int idx, int isUp, int subIdx, int k)
 				r = min(r, Calc(isCol, idx, !currUp, subIdx+1, k-1));
 		}
 	}
+	return r;
+}
+
+int Calc(int isCol, int idx, int isUp, int subIdx, int k)
+{
+	if (!isCol) {
+
+		if (idx == M)
+			return Calc(1, 0, 1, 0, k);
+		if (subIdx == N) 
+			return Calc(0, idx+1, 1, 0, k);
+
+		int &r = dp[isCol][idx][isUp][subIdx][k];
+		if (r != -1)
+			return r;
+
+		bool currUp = (matrix[idx][subIdx] == 'A' || matrix[idx][subIdx] == 'D');
+		r = CommonCalc(currUp, isCol, idx, isUp, subIdx, k);
+		return r;
+	}
+
+	if (idx == N)
+		return 0;
+	if (subIdx == M) 
+		return Calc(1, idx+1, 1, 0, k);
+
+	int &r = dp[isCol][idx][isUp][subIdx][k];
+	if (r != -1)
+		return r;
+
+	bool currUp = (matrix[subIdx][idx] == 'A' || matrix[subIdx][idx] == 'B');
+	r = CommonCalc(currUp, isCol, idx, isUp, subIdx, k);
 	return r;
 }
 
