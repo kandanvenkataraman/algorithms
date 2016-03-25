@@ -1,6 +1,6 @@
 // facebook hacker cup round 3 2016
-#include <iostream>
 #include <vector>
+#include <iostream>
 #include <string>
 #include <algorithm>
 #include <math.h>
