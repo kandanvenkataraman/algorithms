@@ -1,6 +1,6 @@
 // topcoder SRM 216 Div 1 level 3
-#include <vector>
 #include <list>
+#include <vector>
 #include <map>
 #include <set>
 #include <queue>
